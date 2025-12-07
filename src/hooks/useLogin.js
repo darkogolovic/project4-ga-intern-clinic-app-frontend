@@ -1,11 +1,24 @@
 import { useMutation } from "@tanstack/react-query";
-import { api } from "../services/api";
+import { loginService } from "../services/auth";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router";
 
-export function useLogin() {
+export const useLogin = () => {
+  const navigate = useNavigate()
   return useMutation({
-    mutationFn: async (data) => {
-      const res = await api.post("/auth/login/", data);
-      return res.data;
+    mutationFn: loginService,
+
+    onSuccess: (data) => {
+      console.log(data.user)
+      localStorage.setItem("token", data.access);
+      
+      toast.success("Welcome back!");
+      navigate('/all')
+      
+    },
+
+    onError: () => {
+      toast.error("Invalid email or password");
     },
   });
-}
+};

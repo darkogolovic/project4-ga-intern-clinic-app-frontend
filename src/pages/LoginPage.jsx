@@ -4,21 +4,17 @@ import Button from "../components/ui/Button";
 import { useLogin } from "../hooks/useLogin";
 import { toast } from "react-hot-toast";
 import { ClipboardList } from "lucide-react";
+import { useNavigate } from "react-router";
 
 export default function Login() {
+  
   const { register, handleSubmit, formState } = useForm();
   const login = useLogin();
 
   const onSubmit = (data) => {
-    login.mutate(data, {
-      onSuccess: (res) => {
-        localStorage.setItem("token", res.access);
-        toast.success("Welcome back!");
-        window.location.href = "/dashboard";
-      },
-      onError: () => toast.error("Invalid email or password"),
-    });
-  };
+    login.mutate(data)
+  
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#e8eeff] px-4">

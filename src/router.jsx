@@ -15,6 +15,7 @@ const router = createBrowserRouter([
     {
         element:<MainLayout />,
         children:[
+            
             {path:'/all',element:<MainPage />}
         ]
     }
