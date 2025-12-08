@@ -1,16 +1,35 @@
-import Sidebar  from "../components/Sidebar";
-import { Outlet } from "react-router-dom";
+import { Outlet, Navigate } from "react-router-dom";
+import Sidebar from "./Sidebar";
+import { useUser } from "../hooks/useUser";
 
+const AppLayout = () => {
+  const { data: user, isLoading, isError } = useUser();
 
-export default function MainLayout() {
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-sm text-gray-500">
+        Učitavanje...
+      </div>
+    );
+  }
+
+  if (isError || !user) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
-   
-      <div className="flex h-screen">
-      <div className="w-1/7 bg-gray-50 border-r">
+    <div className="flex min-h-screen bg-gray-50">
+      {/* Sidebar 20% */}
+      <aside className="w-[20%] min-w-[220px] max-w-xs border-r border-gray-200 bg-white">
         <Sidebar />
-      </div>
+      </aside>
+
+      {/* Glavni sadržaj 80% */}
+      <main className="w-[80%] p-6">
         <Outlet />
-      </div>
-   
+      </main>
+    </div>
   );
 };
+
+export default AppLayout;

@@ -13,7 +13,7 @@ export const useLogin = () => {
       localStorage.setItem("token", data.access);
       
       toast.success("Welcome back!");
-      navigate('/all')
+      navigate('/dashboard')
       
     },
 
