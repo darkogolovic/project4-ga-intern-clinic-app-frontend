@@ -42,6 +42,7 @@ const DashboardPage = () => {
       <DoctorDashboard
         appointments={appointments}
         user={user}
+        patients={patients}
       />
     );
   }
@@ -51,6 +52,7 @@ const DashboardPage = () => {
       <NurseDashboard
         appointments={appointments}
         user={user}
+        patients={patients}
       />
     );
   }

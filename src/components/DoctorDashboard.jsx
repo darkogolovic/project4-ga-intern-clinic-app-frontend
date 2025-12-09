@@ -1,3 +1,4 @@
+import { getPatientName } from "../helpers/helpers";
 import PageHeader from "./PageHeader";
 import Card from "./ui/Card";
 import {
@@ -10,14 +11,21 @@ import {
   CartesianGrid,
 } from "recharts";
 
-const DoctorDashboard = ({ appointments, user }) => {
-  // samo termini ovog doktora
+/**
+ * props:
+ *  - appointments: lista svih termina (iz /appointments/)
+ *  - user: ulogovani doktor (User)
+ *  - patients: lista pacijenata (iz /patients/)
+ */
+const DoctorDashboard = ({ appointments, user, patients }) => {
+  // Svi termini ovog doktora
   const doctorAppointments = appointments.filter(
     (a) => a.doctor === user.id
   );
 
   const totalAppointments = doctorAppointments.length;
 
+  // Današnji termini
   const today = new Date().toDateString();
   const todaysAppointments = doctorAppointments.filter((a) => {
     if (!a.date_time) return false;
@@ -25,11 +33,12 @@ const DoctorDashboard = ({ appointments, user }) => {
     return d.toDateString() === today;
   });
 
+  // Broj jedinstvenih pacijenata
   const uniquePatientsCount = new Set(
     doctorAppointments.map((a) => a.patient)
   ).size;
 
-  // chart: po statusu
+  // Termini po statusu
   const statusMap = {};
   doctorAppointments.forEach((a) => {
     const status = a.status || "unknown";
@@ -40,6 +49,8 @@ const DoctorDashboard = ({ appointments, user }) => {
     status,
     count,
   }));
+
+
 
   return (
     <div className="space-y-6">
@@ -84,7 +95,10 @@ const DoctorDashboard = ({ appointments, user }) => {
                   >
                     <div>
                       <p className="text-gray-900">
-                        Pacijent #{appt.patient}
+                        {getPatientName(patients,appt.patient)}
+                      </p>
+                      <p className="text-gray-400">
+                         {getPatientName(patients,appt.patient) }
                       </p>
                       <p className="text-gray-400">
                         Termin ID: {appt.id}

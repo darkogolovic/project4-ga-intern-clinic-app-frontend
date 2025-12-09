@@ -9,6 +9,8 @@ import NursesPage from "./pages/NursesPage";
 import PatientsPage from "./pages/PatientsPage";
 import Appointments from "./pages/AppointmentsPage";
 
+import ReportCreatePage from "./pages/ReportPage";
+
 
 const router = createBrowserRouter([
     {
@@ -25,7 +27,8 @@ const router = createBrowserRouter([
             {path: "/doctors",element: <DoctorsPage />},
             {path: "/nurses",element: <NursesPage />},
             {path: "/patients", element: <PatientsPage />},
-            {path: "/appointments", element:<Appointments />}
+            {path: "/appointments", element:<Appointments />},
+            {path:"/appointments/:appointmentId/report", element :<ReportCreatePage />  }
         ]
     }
 ])

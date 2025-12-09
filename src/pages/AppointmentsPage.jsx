@@ -1,15 +1,21 @@
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useAppointments } from "../hooks/useAppointments";
 import { useDashboardData } from "../hooks/useDashboardData";
 import { useFreeSlots } from "../hooks/useFreeSlots";
+import { useReports } from "../hooks/useReports";
+import { useUser } from "../hooks/useUser";
+
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import CardHeader from "../components/ui/CardHeader";
 import CardContent from "../components/ui/CardContent";
 import Title from "../components/ui/Title";
+import toast from "react-hot-toast";
 
 export default function Appointments() {
   const {
@@ -24,7 +30,9 @@ export default function Appointments() {
 
   const patients = dashboardData?.patients || [];
   const doctors = dashboardData?.doctors || [];
-  const nurses = dashboardData?.nurses || []; 
+  const nurses = dashboardData?.nurses || [];
+
+  const { data: user, isLoading: isLoadingUser } = useUser();
 
   const [newAppointment, setNewAppointment] = useState({
     patientId: "",
@@ -34,11 +42,12 @@ export default function Appointments() {
     time: "",
   });
 
-  
-  const {
-    data: freeSlots = [],
-    isFetching: isFetchingSlots,
-  } = useFreeSlots(newAppointment.doctorId, newAppointment.date);
+ 
+  const { data: freeSlots = [], isFetching: isFetchingSlots } = useFreeSlots(
+    newAppointment.doctorId,
+    newAppointment.date
+  );
+
 
   const handleCreate = () => {
     if (
@@ -47,7 +56,6 @@ export default function Appointments() {
       !newAppointment.date ||
       !newAppointment.time
     ) {
-      
       return;
     }
 
@@ -56,9 +64,7 @@ export default function Appointments() {
     createAppointment({
       patient_id: Number(newAppointment.patientId),
       doctor_id: Number(newAppointment.doctorId),
-      nurse_id: newAppointment.nurseId
-        ? Number(newAppointment.nurseId)
-        : null,
+      nurse_id: newAppointment.nurseId ? Number(newAppointment.nurseId) : null,
       date_time: dateTime,
       status: "scheduled",
     });
@@ -83,9 +89,21 @@ export default function Appointments() {
     return u ? `${u.first_name} ${u.last_name}` : id;
   };
 
-  if (isLoadingAppointments || isLoadingDashboard) {
+ 
+
+ 
+
+  const handlePrintReport = (reportId) => {
+    toast.success('Sucsessfuly printed !')
+  };
+
+  if (isLoadingAppointments || isLoadingDashboard || isLoadingUser) {
     return <p>Učitavanje...</p>;
   }
+
+  const isDoctor = user?.role === "DOCTOR";
+  const isNurse = user?.role === "NURSE";
+  console.log(isNurse)
 
   return (
     <div className="p-6 space-y-8">
@@ -126,19 +144,20 @@ export default function Appointments() {
                 setNewAppointment((prev) => ({
                   ...prev,
                   doctorId: e.target.value,
-                  time: "", // reset termina
+                  time: "", // reset termina pri promjeni doktora
                 }))
               }
             >
               <option value="">Izaberi doktora</option>
               {doctors.map((d) => (
                 <option key={d.id} value={d.id}>
-                  {d.first_name} {d.last_name} ({d.specialization})
+                  {d.first_name} {d.last_name}
+                  {d.specialization ? ` (${d.specialization})` : ""}
                 </option>
               ))}
             </select>
 
-            {/* OPCIONALNO: SESTRA */}
+            {/* SESTRA (opciono) */}
             <select
               className="border rounded p-2"
               value={newAppointment.nurseId}
@@ -157,22 +176,24 @@ export default function Appointments() {
               ))}
             </select>
 
-            {/* DATUM */}
+            
             <DatePicker
-                selected={newAppointment.date ? new Date(newAppointment.date) : null}
-                onChange={(date) =>
+              selected={
+                newAppointment.date ? new Date(newAppointment.date) : null
+              }
+              onChange={(date) =>
                 setNewAppointment((prev) => ({
-                ...prev,
-                date: date.toISOString().slice(0, 10), // 'YYYY-MM-DD' za API
-                time: "",
-            }))
-            }
-             dateFormat="yyyy-MM-dd"
-             className="border rounded p-2 w-full"
-            placeholderText="Izaberi datum"
+                  ...prev,
+                  date: date.toISOString().slice(0, 10), // 'YYYY-MM-DD'
+                  time: "",
+                }))
+              }
+              dateFormat="yyyy-MM-dd"
+              className="border rounded p-2 w-full"
+              placeholderText="Izaberi datum"
             />
 
-            {/* VRIJEME – SLOBODNI SLOTVI */}
+            {/* VRIJEME – SLOBODNI TERMINI */}
             <select
               className="border rounded p-2"
               value={newAppointment.time}
@@ -218,14 +239,14 @@ export default function Appointments() {
                 <th className="p-2">Sestra</th>
                 <th className="p-2">Datum</th>
                 <th className="p-2">Vrijeme</th>
+                <th className="p-2">Izvještaj</th>
                 <th className="p-2"></th>
               </tr>
             </thead>
 
             <tbody>
               {appointments?.map((a) => {
-                // a.patient, a.doctor, a.nurse su ID‑evi (po serializeru)
-                const dt = a.date_time; // ISO string
+                const dt = a.date_time; 
                 const [datePart, timePart] = dt.split("T");
 
                 return (
@@ -238,15 +259,39 @@ export default function Appointments() {
                     <td className="p-2">{datePart}</td>
                     <td className="p-2">{timePart?.slice(0, 5)}</td>
 
-                    <td className="p-2 flex gap-2">
-                      {/* Uredi po potrebi */}
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => deleteAppointment(a.id)}
-                      >
-                        Delete
-                      </Button>
+                    {/* IZVJEŠTAJ: doktor piše, sestra vidi print */}
+                    <td className="p-2">
+                      {a.report_id
+                        ? // postoji report → ikonica za print (doktor i sestra)
+                          ( isNurse) && (
+                            <button
+                              className="text-blue-600 hover:text-blue-800"
+                              onClick={() => handlePrintReport(a.report_id)}
+                              title="Printaj izvještaj"
+                            >
+                             Printaj
+                            </button>
+                          )
+                        : isDoctor &&
+                          a.doctor === user.id && (
+                            <Link
+                              to={`/appointments/${a.id}/report`}
+                              className="text-xs text-indigo-600 hover:underline"
+                            >
+                              Napiši izvještaj
+                            </Link>
+                          )}
+                    </td>
+                    <td className="p-2">
+                      <div className="flex gap-2">
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => deleteAppointment(a.id)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 );

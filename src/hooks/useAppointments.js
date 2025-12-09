@@ -27,6 +27,7 @@ export function useAppointments() {
     mutationFn: deleteAppointmentRequest,
     onSuccess: () => {
       queryClient.invalidateQueries(["appointments"]);
+      toast.success('Appointment deleted!')
     },
   });
 

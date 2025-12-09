@@ -1,3 +1,4 @@
+import { getPatientName } from "../helpers/helpers";
 import PageHeader from "./PageHeader";
 import Card from "./ui/Card";
 import {
@@ -10,15 +11,15 @@ import {
   CartesianGrid,
 } from "recharts";
 
-const NurseDashboard = ({ appointments, user }) => {
-  // samo termini ove sestre
+const NurseDashboard = ({ appointments, user,patients }) => {
+  
   const nurseAppointments = appointments.filter(
     (a) => a.nurse === user.id
   );
 
   const totalAppointments = nurseAppointments.length;
 
-  // "na čekanju" = scheduled
+
   const waitingAppointments = nurseAppointments.filter(
     (a) => a.status === "scheduled"
   );
@@ -40,6 +41,8 @@ const NurseDashboard = ({ appointments, user }) => {
   const hourlyData = Object.entries(hourlyMap)
     .map(([hour, count]) => ({ hour, count }))
     .sort((a, b) => (a.hour > b.hour ? 1 : -1));
+    
+
 
   return (
     <div className="space-y-6">
@@ -48,16 +51,14 @@ const NurseDashboard = ({ appointments, user }) => {
         description={`Dobrodošli, ${user.first_name} ${user.last_name}.`}
       />
 
-      {/* Stat kartice */}
+      
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard label="Ukupni termini" value={totalAppointments} />
         <StatCard label="Na čekanju" value={waitingAppointments.length} />
         <StatCard label="Broj pacijenata" value={uniquePatientsCount} />
       </div>
 
-      {/* Sadržaj */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Pacijenti na čekanju */}
         <Card className="p-4 lg:col-span-2">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-medium text-gray-900">
@@ -69,7 +70,7 @@ const NurseDashboard = ({ appointments, user }) => {
             <p className="text-xs text-gray-400">Nema pacijenata na čekanju.</p>
           ) : (
             <ul className="divide-y divide-gray-100">
-              {waitingAppointments.map((appt) => {
+              {nurseAppointments.map((appt) => {
                 const time = appt.date_time
                   ? new Date(appt.date_time).toLocaleTimeString("de-DE", {
                       hour: "2-digit",
@@ -84,7 +85,7 @@ const NurseDashboard = ({ appointments, user }) => {
                   >
                     <div>
                       <p className="text-gray-900">
-                        Pacijent #{appt.patient}
+                        {getPatientName(patients,appt.patient)}
                       </p>
                       <p className="text-gray-400">
                         Termin ID: {appt.id}
@@ -103,7 +104,7 @@ const NurseDashboard = ({ appointments, user }) => {
           )}
         </Card>
 
-        {/* Chart opterećenje po satu */}
+        
         <Card className="p-4">
           <h2 className="text-sm font-medium text-gray-900 mb-2">
             Opterećenje po satu
