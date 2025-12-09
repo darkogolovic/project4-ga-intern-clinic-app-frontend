@@ -37,7 +37,7 @@ export default function Button({
   return (
     <button
       className={cn(
-        "transition font-medium focus:ring-2 focus:ring-blue-300",
+        "transition font-medium focus:ring-2 focus:ring-blue-300 cursor-pointer",
         variants[variant],
         sizes[size],
         full && "w-full",

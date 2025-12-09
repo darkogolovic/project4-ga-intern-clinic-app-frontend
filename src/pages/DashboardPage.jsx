@@ -11,7 +11,7 @@ const DashboardPage = () => {
   if (userLoading || dashLoading) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center text-sm text-gray-500">
-        Učitavanje dashboarda...
+        Dashboard loading...
       </div>
     );
   }
