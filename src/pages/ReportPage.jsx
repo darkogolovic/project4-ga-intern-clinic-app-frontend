@@ -53,11 +53,11 @@ export default function ReportCreatePage() {
   const getUserName = (list, id) => {
     if (!id) return "-";
     const u = list.find((x) => x.id === id);
-    return u ? `${u.first_name} ${u.last_name}` : `Korisnik #${id}`;
+    return u ? `${u.first_name} ${u.last_name}` : `User #${id}`;
   };
 
   if (isLoadingUser || isLoadingDashboard || isLoadingAppointment) {
-    return <p>Učitavanje...</p>;
+    return <p>Loading...</p>;
   }
 
   if (!user || user.role !== "DOCTOR") {
@@ -67,19 +67,19 @@ export default function ReportCreatePage() {
   if (isError) {
     return (
       <p>
-        Greška pri učitavanju termina:{" "}
+        Error loading appointment:{" "}
         {error?.response?.data?.detail || error.message}
       </p>
     );
   }
 
   if (!appointment) {
-    return <p>Termin nije pronađen.</p>;
+    return <p>Appointment not found.</p>;
   }
 
-  // sigurnosna provjera i na frontendu
+  // Frontend security check
   if (appointment.doctor !== user.id) {
-    return <p>Nemate pravo da pišete izvještaj za ovaj termin.</p>;
+    return <p>You do not have permission to write a report for this appointment.</p>;
   }
 
   const patient = getPatient(appointment.patient);
@@ -101,7 +101,6 @@ export default function ReportCreatePage() {
 
     createReport(payload, {
       onSuccess: () => {
-        // nakon kreiranja reporta vrati se na listu termina
         navigate("/appointments");
       },
     });
@@ -114,50 +113,50 @@ export default function ReportCreatePage() {
   return (
     <div className="p-6 space-y-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between">
-        <Title variant="h2">Novi izvještaj</Title>
+        <Title variant="h2">New Report</Title>
         <Button variant="outline" onClick={() => navigate("/appointments")}>
-          Nazad na termine
+          Back to Appointments
         </Button>
       </div>
 
-      {/* Info o pacijentu i terminu */}
+      {/* Appointment info */}
       <Card>
         <CardHeader>
-          <Title variant="h3">Informacije o terminu</Title>
+          <Title variant="h3">Appointment Information</Title>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
           <p>
-            <span className="font-medium">Pacijent:</span>{" "}
+            <span className="font-medium">Patient:</span>{" "}
             {patient
               ? `${patient.first_name} ${patient.last_name}`
-              : `Pacijent #${appointment.patient}`}
+              : `Patient #${appointment.patient}`}
           </p>
           <p>
-            <span className="font-medium">Datum:</span> {datePart}
+            <span className="font-medium">Date:</span> {datePart}
           </p>
           <p>
-            <span className="font-medium">Vrijeme:</span> {timePart}
+            <span className="font-medium">Time:</span> {timePart}
           </p>
           <p>
-            <span className="font-medium">Doktor:</span>{" "}
+            <span className="font-medium">Doctor:</span>{" "}
             {getUserName(dashboardData.doctors || [], appointment.doctor)}
           </p>
           <p>
-            <span className="font-medium">Sestra:</span>{" "}
+            <span className="font-medium">Nurse:</span>{" "}
             {getUserName(dashboardData.nurses || [], appointment.nurse)}
           </p>
 
-          {/* Odabir sestre za report (opciono) */}
+          {/* Optional nurse selection */}
           <div className="mt-3">
             <label className="block text-xs font-medium text-gray-600 mb-1">
-              Sestra (opciono)
+              Nurse (optional)
             </label>
             <select
               className="border rounded p-2 text-sm w-full"
               value={nurseId}
               onChange={(e) => setNurseId(e.target.value)}
             >
-              <option value="">Bez sestre</option>
+              <option value="">No nurse</option>
               {nurses.map((n) => (
                 <option key={n.id} value={n.id}>
                   {n.first_name} {n.last_name}
@@ -166,14 +165,14 @@ export default function ReportCreatePage() {
             </select>
           </div>
 
-          {/* Dugme za istoriju pacijenta */}
+          {/* Patient history button */}
           <div className="mt-3">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setShowHistory((prev) => !prev)}
             >
-              {showHistory ? "Sakrij istoriju pacijenta" : "Prikaži istoriju pacijenta"}
+              {showHistory ? "Hide Patient History" : "Show Patient History"}
             </Button>
           </div>
 
@@ -181,31 +180,31 @@ export default function ReportCreatePage() {
             <div className="mt-4 space-y-3 border-t pt-3">
               <div>
                 <h4 className="text-xs font-semibold text-gray-700">
-                  Osnovni podaci
+                  Basic Information
                 </h4>
                 <p className="text-xs text-gray-600">
-                  Datum rođenja: {patient.date_of_birth || "-"}
+                  Date of Birth: {patient.date_of_birth || "-"}
                 </p>
                 <p className="text-xs text-gray-600">
-                  Pol: {patient.gender || "-"}
+                  Gender: {patient.gender || "-"}
                 </p>
               </div>
 
               <div>
                 <h4 className="text-xs font-semibold text-gray-700">
-                  Medicinska istorija
+                  Medical History
                 </h4>
                 <p className="text-xs text-gray-600 whitespace-pre-wrap">
-                  {patient.medical_history || "Nema unijete medicinske istorije."}
+                  {patient.medical_history || "No medical history provided."}
                 </p>
               </div>
 
               <div>
                 <h4 className="text-xs font-semibold text-gray-700">
-                  Prethodni termini
+                  Previous Appointments
                 </h4>
                 {patientAppointments.length === 0 ? (
-                  <p className="text-xs text-gray-500">Nema zabilježenih termina.</p>
+                  <p className="text-xs text-gray-500">No recorded appointments.</p>
                 ) : (
                   <ul className="text-xs text-gray-600 space-y-1">
                     {patientAppointments.map((appt) => {
@@ -225,15 +224,15 @@ export default function ReportCreatePage() {
         </CardContent>
       </Card>
 
-      {/* Veliko polje za pisanje izvještaja */}
+      {/* Report textarea */}
       <Card>
         <CardHeader>
-          <Title variant="h3">Dijagnoza / Izvještaj</Title>
+          <Title variant="h3">Diagnosis / Report</Title>
         </CardHeader>
         <CardContent className="space-y-4">
           <textarea
             className="w-full border rounded p-3 text-sm min-h-[250px]"
-            placeholder="Unesite detaljan izvještaj o pregledu, dijagnozu i preporuke..."
+            placeholder="Enter a detailed report of the examination, diagnosis, and recommendations..."
             value={diagnosis}
             onChange={(e) => setDiagnosis(e.target.value)}
           />
@@ -243,9 +242,9 @@ export default function ReportCreatePage() {
               variant="outline"
               onClick={() => navigate("/appointments")}
             >
-              Otkaži
+              Cancel
             </Button>
-            <Button onClick={handleSubmit}>Sačuvaj izvještaj</Button>
+            <Button onClick={handleSubmit}>Save Report</Button>
           </div>
         </CardContent>
       </Card>

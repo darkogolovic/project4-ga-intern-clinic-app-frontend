@@ -42,12 +42,10 @@ export default function Appointments() {
     time: "",
   });
 
- 
   const { data: freeSlots = [], isFetching: isFetchingSlots } = useFreeSlots(
     newAppointment.doctorId,
     newAppointment.date
   );
-
 
   const handleCreate = () => {
     if (
@@ -89,35 +87,29 @@ export default function Appointments() {
     return u ? `${u.first_name} ${u.last_name}` : id;
   };
 
- 
-
- 
-
   const handlePrintReport = (reportId) => {
-    toast.success('Sucsessfuly printed !')
+    toast.success("Successfully printed!");
   };
 
   if (isLoadingAppointments || isLoadingDashboard || isLoadingUser) {
-    return <p>Učitavanje...</p>;
+    return <p>Loading...</p>;
   }
 
   const isDoctor = user?.role === "DOCTOR";
   const isNurse = user?.role === "NURSE";
-  console.log(isNurse)
 
   return (
     <div className="p-6 space-y-8">
       <h1 className="text-3xl font-bold">Appointments</h1>
-      <p className="text-gray-600">Dodavanje i pregled zakazanih termina.</p>
+      <p className="text-gray-600">Add and view scheduled appointments.</p>
 
-      {/* CREATE FORM */}
       <Card>
         <CardHeader>
-          <Title>Novi termin</Title>
+          <Title>New Appointment</Title>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            {/* PACIJENT */}
+            {/* PATIENT */}
             <select
               className="border rounded p-2"
               value={newAppointment.patientId}
@@ -128,7 +120,7 @@ export default function Appointments() {
                 }))
               }
             >
-              <option value="">Izaberi pacijenta</option>
+              <option value="">Select patient</option>
               {patients.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.first_name} {p.last_name}
@@ -136,7 +128,7 @@ export default function Appointments() {
               ))}
             </select>
 
-            {/* DOKTOR */}
+            {/* DOCTOR */}
             <select
               className="border rounded p-2"
               value={newAppointment.doctorId}
@@ -144,11 +136,11 @@ export default function Appointments() {
                 setNewAppointment((prev) => ({
                   ...prev,
                   doctorId: e.target.value,
-                  time: "", // reset termina pri promjeni doktora
+                  time: "",
                 }))
               }
             >
-              <option value="">Izaberi doktora</option>
+              <option value="">Select doctor</option>
               {doctors.map((d) => (
                 <option key={d.id} value={d.id}>
                   {d.first_name} {d.last_name}
@@ -157,26 +149,7 @@ export default function Appointments() {
               ))}
             </select>
 
-            {/* SESTRA (opciono) */}
-            <select
-              className="border rounded p-2"
-              value={newAppointment.nurseId}
-              onChange={(e) =>
-                setNewAppointment((prev) => ({
-                  ...prev,
-                  nurseId: e.target.value,
-                }))
-              }
-            >
-              <option value="">Izaberi sestru (opciono)</option>
-              {nurses.map((n) => (
-                <option key={n.id} value={n.id}>
-                  {n.first_name} {n.last_name}
-                </option>
-              ))}
-            </select>
-
-            
+            {/* DATE */}
             <DatePicker
               selected={
                 newAppointment.date ? new Date(newAppointment.date) : null
@@ -184,16 +157,16 @@ export default function Appointments() {
               onChange={(date) =>
                 setNewAppointment((prev) => ({
                   ...prev,
-                  date: date.toISOString().slice(0, 10), // 'YYYY-MM-DD'
+                  date: date.toISOString().slice(0, 10),
                   time: "",
                 }))
               }
               dateFormat="yyyy-MM-dd"
               className="border rounded p-2 w-full"
-              placeholderText="Izaberi datum"
+              placeholderText="Select date"
             />
 
-            {/* VRIJEME – SLOBODNI TERMINI */}
+            {/* TIME */}
             <select
               className="border rounded p-2"
               value={newAppointment.time}
@@ -207,10 +180,10 @@ export default function Appointments() {
             >
               <option value="">
                 {isFetchingSlots
-                  ? "Učitavanje termina..."
+                  ? "Loading slots..."
                   : freeSlots.length
-                  ? "Izaberi slobodan termin"
-                  : "Nema slobodnih termina ili odaberi doktora/datum"}
+                  ? "Select available slot"
+                  : "No free slots or select doctor/date"}
               </option>
               {freeSlots.map((slot) => (
                 <option key={slot} value={slot}>
@@ -220,65 +193,58 @@ export default function Appointments() {
             </select>
           </div>
 
-          <Button onClick={handleCreate}>Sačuvaj termin</Button>
+          <Button onClick={handleCreate}>Save Appointment</Button>
         </CardContent>
       </Card>
 
-      {/* LISTA TERMINA */}
       <Card>
         <CardHeader>
-          <Title variant="h3">Svi termini</Title>
+          <Title variant="h3">All Appointments</Title>
         </CardHeader>
 
         <CardContent>
           <table className="w-full text-left">
             <thead>
               <tr className="border-b">
-                <th className="p-2">Pacijent</th>
-                <th className="p-2">Doktor</th>
-                <th className="p-2">Sestra</th>
-                <th className="p-2">Datum</th>
-                <th className="p-2">Vrijeme</th>
-                <th className="p-2">Izvještaj</th>
+                <th className="p-2">Patient</th>
+                <th className="p-2">Doctor</th>
+                <th className="p-2">Nurse</th>
+                <th className="p-2">Date</th>
+                <th className="p-2">Time</th>
+                <th className="p-2">Report</th>
                 <th className="p-2"></th>
               </tr>
             </thead>
 
             <tbody>
               {appointments?.map((a) => {
-                const dt = a.date_time; 
+                const dt = a.date_time;
                 const [datePart, timePart] = dt.split("T");
 
                 return (
                   <tr key={a.id} className="border-b">
                     <td className="p-2">{getPatientName(a.patient)}</td>
                     <td className="p-2">{getUserName(a.doctor)}</td>
-                    <td className="p-2">
-                      {a.nurse ? getUserName(a.nurse) : "-"}
-                    </td>
+                    <td className="p-2">{a.nurse ? getUserName(a.nurse) : "-"}</td>
                     <td className="p-2">{datePart}</td>
                     <td className="p-2">{timePart?.slice(0, 5)}</td>
-
-                    {/* IZVJEŠTAJ: doktor piše, sestra vidi print */}
                     <td className="p-2">
                       {a.report_id
-                        ? // postoji report → ikonica za print (doktor i sestra)
-                          ( isNurse) && (
+                        ? isNurse && (
                             <button
                               className="text-blue-600 hover:text-blue-800"
                               onClick={() => handlePrintReport(a.report_id)}
-                              title="Printaj izvještaj"
+                              title="Print report"
                             >
-                             Printaj
+                              Print
                             </button>
                           )
-                        : isDoctor &&
-                          a.doctor === user.id && (
+                        : isDoctor && a.doctor === user.id && (
                             <Link
                               to={`/appointments/${a.id}/report`}
                               className="text-xs text-indigo-600 hover:underline"
                             >
-                              Napiši izvještaj
+                              Write Report
                             </Link>
                           )}
                     </td>

@@ -1,39 +1,33 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "../lib/axios"; 
-import { toast } from "react-hot-toast";
 import PageHeader from "../components/PageHeader";
 import Card from "../components/ui/Card";
 import UserTable from "../components/UserTable";
 import UserForm from "../components/UserForm";
 
-const fetchUsers = async () => {
-  const res = await api.get("/users/");
-  return res.data;
-};
+import { useUsers } from "../hooks/useUsers";
+import { useCreateUser } from "../hooks/useCreateUser";
+import SearchBar from "../components/ui/SearchBar";
+
+import { useState } from "react";
 
 const UsersPage = () => {
-  const queryClient = useQueryClient();
+  const { users, isLoading } = useUsers();
+  const createUser = useCreateUser();
 
-  const { data: users = [], isLoading } = useQuery({
-    queryKey: ["users"],
-    queryFn: fetchUsers,
-  });
+  const [search, setSearch] = useState("");
 
-  const createMutation = useMutation({
-    mutationFn: (payload) => api.post("/users/", payload),
-    onSuccess: () => {
-      toast.success("Korisnik kreiran.");
-      queryClient.invalidateQueries(["users"]);
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error("Greška pri kreiranju korisnika.");
-    },
+  const filteredUsers = users.filter(u => {
+    const term = search.toLowerCase();
+    return (
+      u.first_name.toLowerCase().includes(term) ||
+      u.last_name.toLowerCase().includes(term) ||
+      u.email?.toLowerCase().includes(term) ||
+      u.role?.toLowerCase().includes(term)
+    );
   });
 
   const handleCreateUser = async (data) => {
     try {
-      await createMutation.mutateAsync(data);
+      await createUser.mutateAsync(data);
       return true;
     } catch {
       return false;
@@ -44,28 +38,37 @@ const UsersPage = () => {
     <div className="space-y-6">
       <PageHeader
         title="Users"
-        description="Pregled i upravljanje svim korisnicima sistema."
+        description="Overview and management of all system users."
       />
 
       <Card className="p-4">
         <h2 className="text-sm font-medium text-gray-900 mb-3">
-          Novi korisnik
+          New User
         </h2>
         <UserForm
           onSubmit={handleCreateUser}
-          isSubmitting={createMutation.isLoading}
+          isSubmitting={createUser.isLoading}
           showRoleSelect={true}
         />
       </Card>
 
       <Card className="p-4">
         <h2 className="text-sm font-medium text-gray-900 mb-3">
-          Lista korisnika
+          Users List
         </h2>
+
+        <div className="mb-4">
+          <SearchBar
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search users..."
+          />
+        </div>
+
         {isLoading ? (
-          <p className="text-xs text-gray-400">Učitavanje...</p>
+          <p className="text-xs text-gray-400">Loading...</p>
         ) : (
-          <UserTable users={users} />
+          <UserTable users={filteredUsers} />
         )}
       </Card>
     </div>

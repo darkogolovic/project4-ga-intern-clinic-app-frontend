@@ -8,7 +8,7 @@ export const useUser = () => {
       const res = await api.get("me/");
       return res.data;
     },
-    staleTime: 1000 * 60 * 5, 
+    staleTime: 1000, 
   });
 };
 

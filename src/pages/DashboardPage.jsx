@@ -19,7 +19,7 @@ const DashboardPage = () => {
   if (!user || !dashData) {
     return (
       <p className="text-sm text-gray-500">
-        Nije moguće učitati dashboard.
+        Unable to load dashboard.
       </p>
     );
   }
@@ -59,7 +59,7 @@ const DashboardPage = () => {
 
   return (
     <p className="text-sm text-gray-500">
-      Nema dashboarda za vašu ulogu.
+      No dashboard available for your role.
     </p>
   );
 };

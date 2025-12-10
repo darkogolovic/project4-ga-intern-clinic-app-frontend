@@ -8,7 +8,7 @@ const AppLayout = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-sm text-gray-500">
-        Učitavanje...
+       Loading...
       </div>
     );
   }
@@ -19,12 +19,12 @@ const AppLayout = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar 20% */}
+      
       <aside className="w-[20%] min-w-[220px] max-w-xs border-r border-gray-200 bg-white">
         <Sidebar />
       </aside>
 
-      {/* Glavni sadržaj 80% */}
+      
       <main className="w-[80%] p-6">
         <Outlet />
       </main>

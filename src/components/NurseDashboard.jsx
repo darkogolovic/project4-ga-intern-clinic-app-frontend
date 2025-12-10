@@ -11,14 +11,9 @@ import {
   CartesianGrid,
 } from "recharts";
 
-const NurseDashboard = ({ appointments, user,patients }) => {
-  
-  const nurseAppointments = appointments.filter(
-    (a) => a.nurse === user.id
-  );
-
+const NurseDashboard = ({ appointments, user, patients }) => {
+  const nurseAppointments = appointments.filter((a) => a.nurse === user.id);
   const totalAppointments = nurseAppointments.length;
-
 
   const waitingAppointments = nurseAppointments.filter(
     (a) => a.status === "scheduled"
@@ -28,7 +23,6 @@ const NurseDashboard = ({ appointments, user,patients }) => {
     nurseAppointments.map((a) => a.patient)
   ).size;
 
-  // chart: opterećenje po satu
   const hourlyMap = {};
   nurseAppointments.forEach((a) => {
     if (!a.date_time) return;
@@ -41,38 +35,35 @@ const NurseDashboard = ({ appointments, user,patients }) => {
   const hourlyData = Object.entries(hourlyMap)
     .map(([hour, count]) => ({ hour, count }))
     .sort((a, b) => (a.hour > b.hour ? 1 : -1));
-    
-
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Dashboard medicinske sestre"
-        description={`Dobrodošli, ${user.first_name} ${user.last_name}.`}
+        title="Nurse Dashboard"
+        description={`Welcome, ${user.first_name} ${user.last_name}.`}
       />
 
-      
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatCard label="Ukupni termini" value={totalAppointments} />
-        <StatCard label="Na čekanju" value={waitingAppointments.length} />
-        <StatCard label="Broj pacijenata" value={uniquePatientsCount} />
+        <StatCard label="Total Appointments" value={totalAppointments} />
+        <StatCard label="Waiting" value={waitingAppointments.length} />
+        <StatCard label="Patients Count" value={uniquePatientsCount} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="p-4 lg:col-span-2">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-medium text-gray-900">
-              Pacijenti na čekanju
+              Waiting Patients
             </h2>
           </div>
 
           {waitingAppointments.length === 0 ? (
-            <p className="text-xs text-gray-400">Nema pacijenata na čekanju.</p>
+            <p className="text-xs text-gray-400">No patients are waiting.</p>
           ) : (
             <ul className="divide-y divide-gray-100">
-              {nurseAppointments.map((appt) => {
+              {waitingAppointments.map((appt) => {
                 const time = appt.date_time
-                  ? new Date(appt.date_time).toLocaleTimeString("de-DE", {
+                  ? new Date(appt.date_time).toLocaleTimeString("en-GB", {
                       hour: "2-digit",
                       minute: "2-digit",
                     })
@@ -85,11 +76,9 @@ const NurseDashboard = ({ appointments, user,patients }) => {
                   >
                     <div>
                       <p className="text-gray-900">
-                        {getPatientName(patients,appt.patient)}
+                        {getPatientName(patients, appt.patient)}
                       </p>
-                      <p className="text-gray-400">
-                        Termin ID: {appt.id}
-                      </p>
+                      <p className="text-gray-400">Appointment ID: {appt.id}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-gray-500">{time}</p>
@@ -104,10 +93,9 @@ const NurseDashboard = ({ appointments, user,patients }) => {
           )}
         </Card>
 
-        
         <Card className="p-4">
           <h2 className="text-sm font-medium text-gray-900 mb-2">
-            Opterećenje po satu
+            Hourly Load
           </h2>
           <div className="h-56">
             {hourlyData.length === 0 ? (
@@ -116,11 +104,7 @@ const NurseDashboard = ({ appointments, user,patients }) => {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={hourlyData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                  <XAxis
-                    dataKey="hour"
-                    tick={{ fontSize: 11 }}
-                    stroke="#9CA3AF"
-                  />
+                  <XAxis dataKey="hour" tick={{ fontSize: 11 }} stroke="#9CA3AF" />
                   <YAxis tick={{ fontSize: 11 }} stroke="#9CA3AF" />
                   <Tooltip />
                   <Line
@@ -142,16 +126,14 @@ const NurseDashboard = ({ appointments, user,patients }) => {
 
 const StatCard = ({ label, value }) => (
   <Card className="p-4 flex flex-col gap-1">
-    <span className="text-xs uppercase tracking-wide text-gray-400">
-      {label}
-    </span>
+    <span className="text-xs uppercase tracking-wide text-gray-400">{label}</span>
     <span className="text-2xl font-semibold text-gray-900">{value}</span>
   </Card>
 );
 
 const EmptyChartState = () => (
   <div className="h-full flex items-center justify-center">
-    <p className="text-xs text-gray-400">Nema podataka.</p>
+    <p className="text-xs text-gray-400">No data available.</p>
   </div>
 );
 

@@ -1,41 +1,29 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "../lib/axios";
-import { toast } from "react-hot-toast";
 import PageHeader from "../components/PageHeader";
+import { useState } from "react";
 import Card from "../components/ui/Card";
 import UserTable from "../components/UserTable";
 import UserForm from "../components/UserForm";
 
-const fetchUsers = async () => {
-  const res = await api.get("/users/");
-  return res.data;
-};
+import { useDoctors } from "../hooks/useDoctors";
+import SearchBar from "../components/ui/SearchBar";
 
 const DoctorsPage = () => {
-  const queryClient = useQueryClient();
-
-  const { data: users = [], isLoading } = useQuery({
-    queryKey: ["users"],
-    queryFn: fetchUsers,
-  });
-
-  const doctors = users.filter((u) => u.role === "DOCTOR");
-
-  const createMutation = useMutation({
-    mutationFn: (payload) => api.post("/users/", payload),
-    onSuccess: () => {
-      toast.success("Doktor kreiran.");
-      queryClient.invalidateQueries(["users"]);
-    },
-    onError: () => {
-      toast.error("Greška pri kreiranju doktora.");
-    },
-  });
+  const { doctors, usersQuery, createDoctorMutation } = useDoctors();
+    const [search, setSearch] = useState("");
+  
+    const filteredDoctors = doctors.filter(u => {
+      const term = search.toLowerCase();
+      return (
+        u.first_name.toLowerCase().includes(term) ||
+        u.last_name.toLowerCase().includes(term) ||
+        u.email?.toLowerCase().includes(term) ||
+        u.role?.toLowerCase().includes(term)
+      );
+    });
 
   const handleCreateDoctor = async (data) => {
     try {
-      // Forsiramo ulogu DOCTOR bez obzira šta neko unese
-      await createMutation.mutateAsync({ ...data, role: "DOCTOR" });
+      await createDoctorMutation.mutateAsync({ ...data, role: "DOCTOR" });
       return true;
     } catch {
       return false;
@@ -46,29 +34,34 @@ const DoctorsPage = () => {
     <div className="space-y-6">
       <PageHeader
         title="Doctors"
-        description="Pregled i upravljanje doktorima."
+        description="Overview and management of doctors."
       />
 
       <Card className="p-4">
         <h2 className="text-sm font-medium text-gray-900 mb-3">
-          Novi doktor
+          New Doctor
         </h2>
         <UserForm
           defaultRole="DOCTOR"
           onSubmit={handleCreateDoctor}
-          isSubmitting={createMutation.isLoading}
-          showRoleSelect={false} // skrivamo izbor role
+          isSubmitting={createDoctorMutation.isLoading}
+          showRoleSelect={false} 
         />
       </Card>
-
+      
       <Card className="p-4">
         <h2 className="text-sm font-medium text-gray-900 mb-3">
-          Lista doktora
+          Doctors List
         </h2>
-        {isLoading ? (
-          <p className="text-xs text-gray-400">Učitavanje...</p>
+         <SearchBar
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search doctors..."
+                />
+        {usersQuery.isLoading ? (
+          <p className="text-xs text-gray-400">Loading...</p>
         ) : (
-          <UserTable users={doctors} />
+          <UserTable users={filteredDoctors} />
         )}
       </Card>
     </div>

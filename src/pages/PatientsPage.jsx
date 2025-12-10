@@ -11,7 +11,7 @@ const PatientsPage = () => {
 
   const { data: patients = [], isLoading } = patientsQuery;
 
-  const canCreate = user?.role === "NURSE"; 
+  const canCreate = user?.role === "NURSE";
 
   const handleCreatePatient = async (formData) => {
     try {
@@ -25,23 +25,19 @@ const PatientsPage = () => {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={
-          user?.role === "DOCTOR"
-            ? "Moji pacijenti"
-            : "Pacijenti"
-        }
+        title={user?.role === "DOCTOR" ? "My Patients" : "Patients"}
         description={
           user?.role === "NURSE"
-            ? "Dodavanje i pregled pacijenata."
-            : "Pregled pacijenata."
+            ? "Add and manage patients."
+            : "View patients."
         }
       />
 
-      {/* Forma za novu pacijenticu samo za NURSE */}
+      {/* New patient form (only for nurses) */}
       {canCreate && (
         <Card className="p-4">
           <h2 className="text-sm font-medium text-gray-900 mb-3">
-            Novi pacijent
+            New Patient
           </h2>
           <PatientForm
             onSubmit={handleCreatePatient}
@@ -50,14 +46,14 @@ const PatientsPage = () => {
         </Card>
       )}
 
-      {/* Lista pacijenata */}
+      {/* Patients list */}
       <Card className="p-4">
         <h2 className="text-sm font-medium text-gray-900 mb-3">
-          {user?.role === "DOCTOR" ? "Lista pacijenata" : "Svi pacijenti"}
+          {user?.role === "DOCTOR" ? "My Patients List" : "All Patients"}
         </h2>
 
         {isLoading ? (
-          <p className="text-xs text-gray-400">Učitavanje...</p>
+          <p className="text-xs text-gray-400">Loading...</p>
         ) : (
           <PatientsTable patients={patients} />
         )}

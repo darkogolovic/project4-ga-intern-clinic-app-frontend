@@ -14,6 +14,7 @@ const UserForm = ({ defaultRole = "DOCTOR", onSubmit, isSubmitting, showRoleSele
       role: defaultRole,
       specialization: "",
     },
+    shouldUnregister: true,
   });
 
   const handleFormSubmit = async (data) => {
