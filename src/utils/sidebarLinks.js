@@ -10,9 +10,8 @@ export const sidebarLinks = {
 
   DOCTOR: [
     { label: "Dashboard", path: "/dashboard", icon: "LayoutDashboard" },
-    { label: "My Patients", path: "/patients", icon: "User" },
-    { label: "My Appointments", path: "/appointments", icon: "Calendar" },
-    { label: "Reports", path: "/reports", icon: "FileText" },
+    { label: "Patients", path: "/patients", icon: "User" },
+    { label: "Appointments", path: "/appointments", icon: "Calendar" },
   ],
 
   NURSE: [

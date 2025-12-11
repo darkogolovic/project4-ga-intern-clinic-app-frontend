@@ -62,12 +62,16 @@ const NurseDashboard = ({ appointments, user, patients }) => {
           ) : (
             <ul className="divide-y divide-gray-100">
               {waitingAppointments.map((appt) => {
-                const time = appt.date_time
-                  ? new Date(appt.date_time).toLocaleTimeString("en-GB", {
+                const dateTime = appt.date_time ? new Date(appt.date_time) : null;
+                const date = dateTime ? dateTime.toLocaleDateString("en-GB") : "";
+                const time = dateTime
+                  ? 
+                  new Date(appt.date_time).toLocaleTimeString("en-GB", {
                       hour: "2-digit",
                       minute: "2-digit",
                     })
                   : "";
+                  
 
                 return (
                   <li
@@ -81,7 +85,7 @@ const NurseDashboard = ({ appointments, user, patients }) => {
                       <p className="text-gray-400">Appointment ID: {appt.id}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-gray-500">{time}</p>
+                      <p className="text-gray-500">{date} {time}</p>
                       <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700">
                         {appt.status}
                       </span>

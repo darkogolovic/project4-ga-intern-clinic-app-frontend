@@ -59,9 +59,9 @@ export default function Login() {
         <div className="text-sm text-gray-600 w-full">
           <p className="font-semibold mb-1">Demo credentials:</p>
 
-          <p><strong>Admin:</strong> admin@gmail.com / admin1234</p>
-          <p><strong>Doctor:</strong> doctor@gmail.com / doctor1234</p>
-          <p><strong>Nurse:</strong> nurse@gmail.com / nurse1234</p>
+          <p><strong>Admin:</strong> admin@gmail.com / adklinike12</p>
+          <p><strong>Doctor:</strong> doctor@gmail.com / drklinike12</p>
+          <p><strong>Nurse:</strong> nurse@gmail.com / sestra1234</p>
         </div>
       </div>
     </div>
