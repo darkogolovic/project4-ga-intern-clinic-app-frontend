@@ -33,7 +33,7 @@ const PatientForm = ({ onSubmit, isSubmitting }) => {
       </FormField>
 
       <FormField label="Date of Birth" error={errors.date_of_birth}>
-        <Input type="date" {...register("date_of_birth")} />
+        <Input type="date" {...register("date_of_birth")} placeholder="YYYY-MM-DD"/>
       </FormField>
 
       <FormField label="Gender" error={errors.gender}>
