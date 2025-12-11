@@ -1,16 +1,64 @@
-# React + Vite
+![Screenshot](public/Screenshot.png)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# 🏥 Medical Clinic Management System  
+Full-Stack Web Application (Next.js + Django REST Framework)
 
-Currently, two official plugins are available:
+This project is a complete management system for a private medical clinic.  
+It includes role-based access control (Admin, Doctor, Nurse, Patient) and provides full functionality for managing patients, appointments, medical records, users, and services.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🚀 Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### **Frontend**
+- React 
+- React Query (TanStack Query)
+- TailwindCSS 
+- Axios
+- Vite 
+- Recharts
+- Lucide React
+- React hot toast
+- React hook form
 
-## Expanding the ESLint configuration
+### **Backend**
+- Django REST Framework
+- JWT Authentication
+- PostgreSQL
+- Django CORS Headers
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+---
+
+## ✨ Features
+
+### 👤 **Role-Based Access**
+ Role | Permissions 
+ **Admin**  Manage users, services, appointments, medical records,statistics 
+ **Doctor**  View patients, add medical records, diagnoses 
+ **Nurse**  Create appointments, assist doctors 
+ 
+
+---
+
+## 📅 Appointments Module
+
+Nurse & Admin can:
+- Create, update, delete appointments
+- Select patient & doctor
+- Choose date and time
+
+
+UI Features:
+- Expandable appointment card (click to show details)
+- Status indicators: **Pending, Completed, Canceled**
+- Automatic refresh through React Query
+
+
+ ## **Live Link**
+[Clinic](https://your-app-url.com)
+
+
+
+
+
