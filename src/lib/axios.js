@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 const api = axios.create({
-  baseURL: "http://localhost:8000/api",
+  baseURL: "https://clinic-f2fdc2951f89.herokuapp.com/api/",
   withCredentials: true,
 });
 
