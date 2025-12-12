@@ -64,12 +64,12 @@ const AdminDashboard = ({ patients, appointments, doctors, nurses }) => {
 
     const getPatientName = (id) => {
   const p = patients.find((pa) => pa.id === id);
-  return p ? p.name : `Patient #${id}`;
+  return p ? `${p.first_name} ${p.last_name}` : `Patient #${id}`;
 };
 
 const getDoctorName = (id) => {
   const d = doctors.find((dr) => dr.id === id);
-  return d ? d.name : `Doctor #${id}`;
+  return d ? ` ${d.first_name} ${d.last_name}` : `Doctor #${id}`;
 };
 
 
