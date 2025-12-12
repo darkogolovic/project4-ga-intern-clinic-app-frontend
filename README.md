@@ -56,7 +56,7 @@ UI Features:
 
 
  ## **Live Link**
-[Clinic](https://your-app-url.com)
+[Clinic](https://clinic-intern.netlify.app/)
 
 
 

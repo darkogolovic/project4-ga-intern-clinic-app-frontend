@@ -29,13 +29,13 @@ const UserForm = ({ defaultRole = "DOCTOR", onSubmit, isSubmitting, showRoleSele
       onSubmit={handleSubmit(handleFormSubmit)}
       className="grid grid-cols-1 sm:grid-cols-2 gap-4"
     >
-      <FormField label="Ime" error={errors.first_name}>
+      <FormField label="Name" error={errors.first_name}>
         <Input
           {...register("first_name", { required: "Ime je obavezno." })}
         />
       </FormField>
 
-      <FormField label="Prezime" error={errors.last_name}>
+      <FormField label="Last name" error={errors.last_name}>
         <Input
           {...register("last_name", { required: "Prezime je obavezno." })}
         />
@@ -48,7 +48,7 @@ const UserForm = ({ defaultRole = "DOCTOR", onSubmit, isSubmitting, showRoleSele
         />
       </FormField>
 
-      <FormField label="Lozinka" error={errors.password}>
+      <FormField label="Password" error={errors.password}>
         <Input
           type="password"
           {...register("password", { required: "Lozinka je obavezna." })}
@@ -56,7 +56,7 @@ const UserForm = ({ defaultRole = "DOCTOR", onSubmit, isSubmitting, showRoleSele
       </FormField>
 
       {showRoleSelect && (
-        <FormField label="Uloga" error={errors.role}>
+        <FormField label="Role" error={errors.role}>
           <select
             className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             {...register("role", { required: "Uloga je obavezna." })}
@@ -68,16 +68,16 @@ const UserForm = ({ defaultRole = "DOCTOR", onSubmit, isSubmitting, showRoleSele
         </FormField>
       )}
 
-      <FormField label="Specijalizacija">
+      <FormField label="Specialization">
         <Input
-          placeholder="npr. Kardiolog"
+          placeholder="Cardiology"
           {...register("specialization")}
         />
       </FormField>
 
       <div className="sm:col-span-2 flex justify-end">
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Spremanje..." : "Dodaj korisnika"}
+          {isSubmitting ? "Loading..." : "Add user"}
         </Button>
       </div>
     </form>
