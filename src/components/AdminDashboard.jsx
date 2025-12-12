@@ -61,6 +61,18 @@ const AdminDashboard = ({ patients, appointments, doctors, nurses }) => {
     )
     .slice(0, 5);
 
+
+    const getPatientName = (id) => {
+  const p = patients.find((pa) => pa.id === id);
+  return p ? p.name : `Patient #${id}`;
+};
+
+const getDoctorName = (id) => {
+  const d = doctors.find((dr) => dr.id === id);
+  return d ? d.name : `Doctor #${id}`;
+};
+
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -154,8 +166,8 @@ const AdminDashboard = ({ patients, appointments, doctors, nurses }) => {
                 {latestAppointments.map((a) => (
                   <tr key={a.id} className="border-b last:border-0 text-gray-700">
                     <td className="py-2 pr-4">#{a.id}</td>
-                    <td className="py-2 pr-4">Patient #{a.patient}</td>
-                    <td className="py-2 pr-4">Doctor #{a.doctor}</td>
+                    <td className="py-2 pr-4">{getPatientName(a.patient)}</td>
+                    <td className="py-2 pr-4">{getDoctorName(a.doctor)}</td>
                     <td className="py-2 pr-4">
                       {a.date_time &&
                         new Date(a.date_time).toLocaleString("en-GB", {
