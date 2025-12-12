@@ -26,10 +26,10 @@ const UserTable = ({ users }) => {
       <table className="min-w-full text-sm">
         <thead>
           <tr className="border-b text-xs text-gray-500">
-            <th className="py-2 pr-4 text-left">Ime i prezime</th>
+            <th className="py-2 pr-4 text-left">Full name</th>
             <th className="py-2 pr-4 text-left">Email</th>
-            <th className="py-2 pr-4 text-left">Uloga</th>
-            <th className="py-2 pr-4 text-left">Specijalizacija</th>
+            <th className="py-2 pr-4 text-left">Role</th>
+            <th className="py-2 pr-4 text-left">Specialization</th>
           </tr>
         </thead>
         <tbody>
